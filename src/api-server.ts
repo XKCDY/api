@@ -2,6 +2,7 @@ import cors from 'cors';
 import express from 'express';
 import http from 'http';
 import morgan from 'morgan';
+import cacheControl from 'express-cache-controller';
 import {Server, Errors} from 'typescript-rest';
 
 export class ApiServer {
@@ -48,6 +49,13 @@ export class ApiServer {
   private config(): void {
     this.app.use(cors());
     this.app.use(morgan('combined'));
+
+    if (process.env.NODE_ENV === 'production') {
+      this.app.use(cacheControl({
+        public: true,
+        maxAge: 5 * 60 // 5 minutes
+      }));
+    }
   }
 
   private handleErrors(): void {
