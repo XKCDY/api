@@ -1,4 +1,5 @@
-import {GET, Path, PathParam, Errors} from 'typescript-rest';
+import {GET, Path, PathParam, QueryParam, Errors} from 'typescript-rest';
+import {Op} from 'sequelize';
 import {Comic, ComicImg} from '../models';
 import {ComicModel} from '../models/comic';
 
@@ -15,8 +16,23 @@ const findOptions = {
 @Path('/comics')
 export class ComicController {
   @GET
-  public async getAllComics(): Promise<ComicModel[]> {
-    return Comic.findAll(findOptions);
+  public async getAllComics(@QueryParam('since') since?: number): Promise<ComicModel[]> {
+    let options = null;
+
+    if (typeof since === 'number') {
+      options = {
+        ...findOptions,
+        where: {
+          id: {
+            [Op.gt]: since
+          }
+        }
+      };
+    } else {
+      options = findOptions;
+    }
+
+    return Comic.findAll(options);
   }
 
   @Path(':comicId')
