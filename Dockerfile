@@ -1,13 +1,15 @@
 FROM node:13
 
+ENV NODE_ENV=production
+
 WORKDIR /usr/app
 
-COPY package.json .
+COPY package.json yarn.lock .
 
 RUN yarn install
 
 COPY . .
 
-RUN yarn run build
+RUN yarn build
 
-CMD ["yarn", "start"]
+CMD ["./start.sh"]

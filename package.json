@@ -19,6 +19,8 @@
     "watch": "tsc --watch",
     "prepack": "npm run clean && npm run build",
     "start": "node dist/index.js start",
+    "migrate": "node dist/index.js migrate",
+    "scrape": "node dist/index.js scrape",
     "dev": "nodemon"
   },
   "devDependencies": {
