@@ -21,8 +21,8 @@ export type ComicImgStatic = typeof Model & (new (values?: Record<string, unknow
 export function ComicImgFactory(sequelize: Sequelize): ComicImgStatic {
   return sequelize.define('comic_imgs', {
     id: {
-      type: DataTypes.UUID,
-      allowNull: false,
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
       primaryKey: true
     },
     height: {
@@ -41,6 +41,12 @@ export function ComicImgFactory(sequelize: Sequelize): ComicImgStatic {
       type: DataTypes.STRING
     }
   }, {
-    timestamps: false
+    timestamps: false,
+    indexes: [
+      {
+        unique: false,
+        fields: ['comic_id']
+      }
+    ]
   }) as ComicImgStatic;
 }

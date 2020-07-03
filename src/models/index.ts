@@ -1,5 +1,4 @@
 import * as sequelize from 'sequelize';
-import {v4 as uuid} from 'uuid';
 import {ComicFactory} from './comic';
 import {ComicImgFactory} from './comic-img';
 
@@ -23,8 +22,4 @@ export const db = new sequelize.Sequelize(
 export const Comic = ComicFactory(db);
 export const ComicImg = ComicImgFactory(db);
 
-ComicImg.beforeCreate(async img => {
-  img.id = uuid();
-});
-
-Comic.hasMany(ComicImg, {foreignKey: 'comic_id'});
+Comic.Imgs = Comic.hasMany(ComicImg, {foreignKey: 'comic_id', as: 'imgs'});
