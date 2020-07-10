@@ -1,15 +1,18 @@
 import {GET, Path, PathParam, QueryParam, Errors} from 'typescript-rest';
-import {Op} from 'sequelize';
+import {Op, FindOptions} from 'sequelize';
 import {Comic, ComicImg} from '../models';
-import {ComicModel} from '../models/comic';
+import {ComicModel, ComicAttributes} from '../models/comic';
 
-const findOptions = {
+const findOptions: FindOptions<ComicAttributes> = {
   include: [
     {
       model: ComicImg,
       as: 'imgs',
       attributes: ['height', 'width', 'ratio', 'sourceUrl', 'size']
     }
+  ],
+  order: [
+    ['id', 'ASC']
   ]
 };
 
@@ -33,6 +36,18 @@ export class ComicController {
     }
 
     return Comic.findAll(options);
+  }
+
+  @Path('/latest')
+  @GET
+  public async getLatestComic(): Promise<ComicModel> {
+    const comic = await Comic.findOne({...findOptions, order: [['id', 'DESC']]});
+
+    if (comic) {
+      return comic;
+    }
+
+    throw new Errors.NotFoundError('no comics');
   }
 
   @Path(':comicId')
