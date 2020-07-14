@@ -49,6 +49,10 @@ export class ApiServer {
   private config(): void {
     this.app.use(cors());
     this.app.use(morgan('combined'));
+    this.app.use('/docs', express.static('docs'));
+    this.app.get('/', (_, res) => {
+      res.redirect('/docs');
+    });
 
     if (process.env.NODE_ENV === 'production') {
       this.app.use(cacheControl({

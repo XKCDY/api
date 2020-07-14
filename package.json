@@ -15,13 +15,14 @@
     "lint-fix": "eslint 'src/**/*.ts' --fix",
     "clean": "rm -rf dist dts",
     "test": "npm run lint",
-    "build": "tsc",
+    "build": "tsc && yarn docs",
     "watch": "tsc --watch",
     "prepack": "npm run clean && npm run build",
     "start": "node dist/index.js start",
     "migrate": "node dist/index.js migrate",
     "scrape": "node dist/index.js scrape",
-    "dev": "nodemon"
+    "dev": "nodemon",
+    "docs": "apidoc -i src/ -o docs"
   },
   "devDependencies": {
     "@types/cors": "^2.8.6",
@@ -31,6 +32,7 @@
     "@types/validator": "^13.1.0",
     "@typescript-eslint/eslint-plugin": "^3.5.0",
     "@typescript-eslint/parser": "^3.5.0",
+    "apidoc": "^0.23.0",
     "eslint": "^7.3.1",
     "eslint-config-xo": "^0.32.0",
     "eslint-config-xo-typescript": "^0.31.0",
@@ -72,5 +74,10 @@
     "sequelize": "^6.2.4",
     "typescript-rest": "^3.0.1",
     "uuid": "^8.2.0"
+  },
+  "apidoc": {
+    "name": "XKCDY",
+    "description": "The XKCDY API",
+    "title": "The XKCDY API"
   }
 }
