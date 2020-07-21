@@ -6,7 +6,7 @@ interface AddTokenRequest {
   version: string;
 }
 
-@Path('/device-token')
+@Path('/device-tokens')
 export class DeviceTokenController {
   @PUT
   public async addToken(data: AddTokenRequest): Promise<void> {
