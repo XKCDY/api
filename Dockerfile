@@ -12,4 +12,5 @@ ENV NODE_ENV=production
 
 RUN yarn build
 
-CMD ["./start.sh"]
+ENTRYPOINT ["node", "dist/index.js"]
+CMD ["migrateAndStart"]
