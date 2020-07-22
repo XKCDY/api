@@ -1,5 +1,6 @@
 import {Op} from 'sequelize';
 import apn from 'apn';
+import pLimit from 'p-limit';
 import {DeviceToken, Comic} from '../models';
 import {KEY_PATH, KEY_ID, KEY_TEAM_ID} from '../lib/config';
 
@@ -30,7 +31,10 @@ export default async () => {
     }
   });
 
-  await Promise.all(devicesToUpdate.map(async deviceToken => {
+  // Don't overload database
+  const limit = pLimit(10);
+
+  await Promise.all(devicesToUpdate.map(async deviceToken => limit(async () => {
     const notification = new apn.Notification();
 
     notification.expiry = Math.floor(Date.now() / 1000) + 3600;
@@ -60,7 +64,7 @@ export default async () => {
         await DeviceToken.destroy({where: {token: failed.device}});
       }
     }));
-  }));
+  })));
 
   apnProvider.shutdown();
 };
