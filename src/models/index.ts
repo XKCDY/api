@@ -2,8 +2,9 @@ import * as sequelize from 'sequelize';
 import {ComicFactory} from './comic';
 import {ComicImgFactory} from './comic-img';
 import {DeviceTokenFactory} from './device-token';
+import {DB_URL} from '../lib/config';
 
-export const db = new sequelize.Sequelize(process.env.DATABASE_URL ?? 'postgres://postgres:postgres@localhost/postgres');
+export const db = new sequelize.Sequelize(DB_URL);
 
 export const Comic = ComicFactory(db);
 export const ComicImg = ComicImgFactory(db);
