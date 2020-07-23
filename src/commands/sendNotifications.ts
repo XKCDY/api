@@ -41,7 +41,7 @@ export default async () => {
     notification.sound = 'ping.aiff';
     notification.alert = {
       title: 'New comic!',
-      body: `#${latestComic.id} was just published.`
+      body: `${latestComic.title} (#${latestComic.id}) was just published.`
     };
     notification.topic = 'com.maxisom.xkcdy';
 
