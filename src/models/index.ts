@@ -21,7 +21,6 @@ DeviceToken.beforeCreate(async deviceToken => {
   const comic = await Comic.findOne({order: [['id', 'DESC']]});
 
   if (comic) {
-    // TODO: remove - 1 for testing
-    deviceToken.lastComicIdSent = comic.id - 1;
+    deviceToken.lastComicIdSent = comic.id;
   }
 });
