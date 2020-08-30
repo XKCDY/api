@@ -66,6 +66,7 @@
     "apn": "^2.2.0",
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
+    "exifr": "^5.0.3",
     "express": "^4.17.1",
     "express-cache-controller": "^1.1.0",
     "got": "^11.3.0",

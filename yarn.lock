@@ -1203,6 +1203,11 @@ etag@~1.8.1:
   resolved "https://registry.yarnpkg.com/etag/-/etag-1.8.1.tgz#41ae2eeb65efa62268aebfea83ac7d79299b0887"
   integrity sha1-Qa4u62XvpiJorr/qg6x9eSmbCIc=
 
+exifr@^5.0.3:
+  version "5.0.3"
+  resolved "https://registry.yarnpkg.com/exifr/-/exifr-5.0.3.tgz#700e6a0543e20f4ea88a286250232cbc2d98b6cb"
+  integrity sha512-vC90Lop0cBj5k9V18qHV6lzf/O1lWOlcHXn9r0Ueh4bTZnr+HV4QKFXPSR1v87sq6BBTFAgXrF/ZfeWBAwBcFQ==
+
 express-cache-controller@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/express-cache-controller/-/express-cache-controller-1.1.0.tgz#fa8f02e0ec40374ce552522526b6aab883c76048"

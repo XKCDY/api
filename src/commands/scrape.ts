@@ -1,5 +1,6 @@
 import got, {HTTPError} from 'got';
-import probe from 'probe-image-size';
+import probe, {ProbeResult} from 'probe-image-size';
+import * as exifr from 'exifr';
 import {Comic} from '../models';
 import {ComicImgModel, ImgSize} from '../models/comic-img';
 
@@ -42,20 +43,38 @@ export default async () => {
       const comic: XKCDResponse = await got(`https://xkcd.com/${fetchingId}/info.0.json`).json();
 
       // Get images
+      const promises: Array<Promise<[PromiseSettledResult<ProbeResult>, PromiseSettledResult<ProbeResult>] | number>> = [
+        Promise.allSettled([
+          probe(comic.img),
+          probe(getX2Url(comic.img))
+        ])
+      ];
+
+      if (comic.img.includes('jpeg') || comic.img.includes('jpg')) {
+        promises.push((async () => {
+          const imgData = await got(comic.img).buffer();
+          return (await exifr.orientation(imgData)) ?? 1;
+        })());
+      }
+
       // eslint-disable-next-line no-await-in-loop
-      const imgResults = await Promise.allSettled([
-        probe(comic.img),
-        probe(getX2Url(comic.img))
-      ]);
+      const resolved = await Promise.all(promises);
+      const imgResults = resolved[0] as Array<PromiseSettledResult<ProbeResult>>;
+      const orientation = resolved[1] as number;
+
+      const swapWidthAndHeight = orientation !== undefined && [5, 6, 7, 8].includes(orientation);
 
       const imgs: ComicImgModel[] = [];
 
       imgResults.forEach((result, i) => {
         if (result.status === 'fulfilled') {
+          const height = swapWidthAndHeight ? result.value.width : result.value.height;
+          const width = swapWidthAndHeight ? result.value.height : result.value.width;
+
           imgs.push({
-            height: result.value.height,
-            width: result.value.width,
-            ratio: result.value.width / result.value.height,
+            height,
+            width,
+            ratio: width / height,
             sourceUrl: result.value.url,
             size: i === 0 ? ImgSize.x1 : ImgSize.x2
           } as ComicImgModel);
