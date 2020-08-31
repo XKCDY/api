@@ -44,6 +44,7 @@ export default async () => {
       body: `${latestComic.title} (#${latestComic.id}) was just published.`
     };
     notification.topic = 'com.maxisom.xkcdy';
+    notification.payload = {comicId: latestComic.id};
 
     const result = await apnProvider.send(notification, deviceToken.token);
 
