@@ -50,6 +50,7 @@ export class ApiServer {
     this.app.use(cors());
     this.app.use(morgan('combined'));
     this.app.use('/docs', express.static('docs'));
+    this.app.use('/static', express.static('public'));
     this.app.get('/', (_, res) => {
       res.redirect('/docs');
     });
