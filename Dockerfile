@@ -26,6 +26,7 @@ FROM base AS prod
 RUN yarn prisma generate
 
 COPY --from=builder /usr/app/dist dist
+COPY public public
 
 ENV NODE_ENV=production
 
