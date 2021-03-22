@@ -1,4 +1,4 @@
-import {Body, Controller, Delete, Injectable, Param, Post, Put} from '@nestjs/common';
+import {Body, Controller, Delete, Injectable, NotFoundException, Param, Post, Put} from '@nestjs/common';
 import apn from 'apn';
 import apnProviderFactory from 'src/lib/apn-provider-factory';
 import {PrismaService} from 'src/prisma/prisma.service';
@@ -27,6 +27,12 @@ export class DeviceTokenController {
 
 	@Delete(':token')
 	async removeToken(@Param('token') token: string) {
+		const existingToken = await this.prisma.deviceToken.findUnique({where: {token}});
+
+		if (!existingToken) {
+			throw new NotFoundException('Token does not exist');
+		}
+
 		await this.prisma.deviceToken.delete({where: {token}});
 	}
 
