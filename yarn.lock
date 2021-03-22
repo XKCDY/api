@@ -619,6 +619,13 @@
   resolved "https://registry.yarnpkg.com/@types/parse-json/-/parse-json-4.0.0.tgz#2f8bb441434d163b35fb8ffdccd7138927ffb8c0"
   integrity sha512-//oorEZjL6sbPcKUaCdIGlIUeH26mgzimjBB77G6XRgnDl/L5wOnpyBGRe/Mmf5CVW3PwEBE1NjiMZ/ssFh4wA==
 
+"@types/probe-image-size@^5.0.1":
+  version "5.0.1"
+  resolved "https://registry.yarnpkg.com/@types/probe-image-size/-/probe-image-size-5.0.1.tgz#a8e84565632162599cbbb455ad9812175e3e9e44"
+  integrity sha512-81i/4VhMVlQTa9nWLT5TZ62XAZDVWRx/968BpIPjmRf2H37Kimw/sLcvyQ6TiSqQXYi3GzGgD3oEx1+tD/e+fw==
+  dependencies:
+    "@types/node" "*"
+
 "@types/qs@*":
   version "6.9.3"
   resolved "https://registry.yarnpkg.com/@types/qs/-/qs-6.9.3.tgz#b755a0934564a200d3efdf88546ec93c369abd03"
@@ -1236,7 +1243,7 @@ builtin-status-codes@^3.0.0:
   resolved "https://registry.yarnpkg.com/builtin-status-codes/-/builtin-status-codes-3.0.0.tgz#85982878e21b98e1c66425e03d0174788f569ee8"
   integrity sha1-hZgoeOIbmOHGZCXgPQF0eI9Wnug=
 
-bullmq@^1.14.7:
+bullmq@^1.14.7, bullmq@^1.15.1:
   version "1.15.1"
   resolved "https://registry.yarnpkg.com/bullmq/-/bullmq-1.15.1.tgz#7c809ce5732e56db3ba778980d3d93127ee680fd"
   integrity sha512-vj41rPysNw7Y2vfivZ7NzJALhUnab3W5U1sAtIu1IZyo0TCcqk9PIC/MQfeTl1U771DGfm1I1/uLwX1cNi2MzQ==

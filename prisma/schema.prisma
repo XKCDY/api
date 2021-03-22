@@ -7,7 +7,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model ComicImgs {
+model ComicImg {
   @@map("comic_imgs")
   id        Int     @id @default(autoincrement())
   height    Int?
@@ -16,12 +16,12 @@ model ComicImgs {
   sourceUrl String? @db.VarChar(255)
   size      String? @db.VarChar(255)
   comic_id  Int?
-  comics    Comics? @relation(fields: [comic_id], references: [id])
+  comics    Comic? @relation(fields: [comic_id], references: [id])
 
   @@index([comic_id], name: "comic_imgs_comic_id")
 }
 
-model Comics {
+model Comic {
   @@map("comics")
   id             Int          @id
   publishedAt    DateTime?    @db.Timestamptz(6)
@@ -33,7 +33,7 @@ model Comics {
   sourceUrl      String?      @db.VarChar(255)
   explainUrl     String?      @db.VarChar(255)
   interactiveUrl String?      @db.VarChar(255)
-  imgs           ComicImgs[]
+  imgs           ComicImg[]
 }
 
 model DeviceTokens {
@@ -41,6 +41,6 @@ model DeviceTokens {
   token           String   @id @db.VarChar(255)
   version         String?  @db.VarChar(255)
   lastComicIdSent Int?
-  createdAt       DateTime @db.Timestamptz(6)
-  updatedAt       DateTime @db.Timestamptz(6)
+  createdAt       DateTime @db.Timestamptz(6) @default(now())
+  updatedAt       DateTime @db.Timestamptz(6) @updatedAt
 }
