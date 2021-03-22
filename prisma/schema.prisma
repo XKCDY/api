@@ -10,13 +10,13 @@ datasource db {
 model ComicImg {
   @@map("comic_imgs")
   id        Int     @id @default(autoincrement())
-  height    Int?
-  width     Int?
-  ratio     Float?
-  sourceUrl String? @db.VarChar(255)
-  size      String? @db.VarChar(255)
-  comic_id  Int?
-  comics    Comic? @relation(fields: [comic_id], references: [id])
+  height    Int
+  width     Int
+  ratio     Float
+  sourceUrl String  @db.VarChar(255)
+  size      String  @db.VarChar(255)
+  comic_id  Int
+  comics    Comic @relation(fields: [comic_id], references: [id])
 
   @@index([comic_id], name: "comic_imgs_comic_id")
 }
@@ -24,23 +24,23 @@ model ComicImg {
 model Comic {
   @@map("comics")
   id             Int          @id
-  publishedAt    DateTime?    @db.Timestamptz(6)
-  news           String?
-  safeTitle      String?
-  title          String?
-  transcript     String?
-  alt            String?
-  sourceUrl      String?      @db.VarChar(255)
-  explainUrl     String?      @db.VarChar(255)
+  publishedAt    DateTime     @db.Timestamptz(6)
+  news           String
+  safeTitle      String
+  title          String
+  transcript     String
+  alt            String
+  sourceUrl      String       @db.VarChar(255)
+  explainUrl     String       @db.VarChar(255)
   interactiveUrl String?      @db.VarChar(255)
   imgs           ComicImg[]
 }
 
-model DeviceTokens {
+model DeviceToken {
   @@map("device_tokens")
   token           String   @id @db.VarChar(255)
   version         String?  @db.VarChar(255)
-  lastComicIdSent Int?
+  lastComicIdSent Int
   createdAt       DateTime @db.Timestamptz(6) @default(now())
   updatedAt       DateTime @db.Timestamptz(6) @updatedAt
 }

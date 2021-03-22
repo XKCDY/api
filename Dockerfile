@@ -1,16 +1,33 @@
-FROM node:13
+FROM node:15-alpine AS base
 
 WORKDIR /usr/app
 
 COPY package.json yarn.lock ./
+COPY prisma .
 
-RUN yarn install
+# Install prod dependencies
+RUN yarn install --prod --frozen-lockfile
+
+# Dependencies
+FROM base AS dependencies
+
+# Install dev dependencies
+RUN yarn install --frozen-lockfile
+
+# Build app
+FROM dependencies AS builder
 
 COPY . .
+RUN yarn build
+
+# Only copy essentials
+FROM base AS prod
+
+RUN yarn prisma generate
+
+COPY --from=builder /usr/app/dist dist
 
 ENV NODE_ENV=production
 
-RUN yarn build
-
-ENTRYPOINT ["node", "dist/index.js"]
-CMD ["migrateAndStart"]
+ENTRYPOINT ["yarn"]
+CMD ["start"]

@@ -11,8 +11,13 @@ export class DeviceTokenController {
 
 	@Put()
 	async addToken(@Body() createTokenDto: CreateTokenDto) {
-		await this.prisma.deviceTokens.upsert({
-			create: createTokenDto,
+		const latestComic = await this.prisma.comic.findFirst({orderBy: {id: 'desc'}});
+
+		await this.prisma.deviceToken.upsert({
+			create: {
+				...createTokenDto,
+				lastComicIdSent: latestComic?.id ?? 0
+			},
 			update: createTokenDto,
 			where: {
 				token: createTokenDto.token
@@ -22,7 +27,7 @@ export class DeviceTokenController {
 
 	@Delete(':token')
 	async removeToken(@Param('token') token: string) {
-		await this.prisma.deviceTokens.delete({where: {token}});
+		await this.prisma.deviceToken.delete({where: {token}});
 	}
 
 	@Post(':token/test')

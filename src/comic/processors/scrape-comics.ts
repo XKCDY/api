@@ -34,9 +34,9 @@ const getX2Url = (fromUrl: string): string => {
 	return `${imageUrlSplit.splice(0, imageUrlSplit.length - 1).join('.')}_2x.${imageUrlSplit[imageUrlSplit.length - 1]}`;
 };
 
-const processJob = async (_: Job) => {
-	const logger = new Logger('Job: scrape comics');
+const logger = new Logger('Job: scrape comics');
 
+const processJob = async (_: Job) => {
 	logger.log('Started scraping...');
 
 	// This could be significantly speed up on the first run by using binary search. Not really worth it at this point.
@@ -151,6 +151,8 @@ const processJob = async (_: Job) => {
 	if (newLatestComic) {
 		logger.log(`Scrapped all comics up to and including ${newLatestComic.id}.`);
 	}
+
+	await prisma.$disconnect();
 };
 
 export default processJob;
