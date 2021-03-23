@@ -23,6 +23,7 @@
     "migrations:run": "prisma migrate deploy --preview-feature"
   },
   "devDependencies": {
+    "@nestjs/cli": "^7.5.6",
     "@types/cors": "^2.8.6",
     "@types/morgan": "^1.9.1",
     "@types/node": "^14.0.14",

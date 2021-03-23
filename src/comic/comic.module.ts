@@ -11,6 +11,10 @@ import {ComicService} from './comic.service';
 		BullModule.registerQueue({
 			name: 'scrape-comics',
 			processors: [join(__dirname, 'processors/scrape-comics.js')]
+		}),
+		BullModule.registerQueue({
+			name: 'special-comics',
+			processors: [join(__dirname, 'processors/special-comics.js')]
 		})
 	],
 	controllers: [ComicController],
