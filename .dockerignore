@@ -4,3 +4,4 @@ dist
 dts
 yarn-error.log
 .env
+Dockerfile

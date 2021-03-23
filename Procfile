@@ -1,1 +1,1 @@
-release: yarn migrations:run
+release: migrations:run
