@@ -18,7 +18,7 @@ export class ComicService implements OnModuleInit {
 		// Add recurring job
 		await this.scrapeComicsQueue.add('recurring-scrape', null, {
 			repeat: {
-				cron: '5 * * * *' // Every 5 minutes
+				cron: '*/5 * * * *' // Every 5 minutes
 			},
 			jobId: '2'
 		});
@@ -31,7 +31,7 @@ export class ComicService implements OnModuleInit {
 		// Add recurring job
 		await this.specialComicsQueue.add('recurring-check', null, {
 			repeat: {
-				cron: '5 * * * *' // Every 5 minutes
+				cron: '*/5 * * * *' // Every 5 minutes
 			},
 			jobId: '2'
 		});

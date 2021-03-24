@@ -15,7 +15,7 @@ export class DeviceTokenService implements OnModuleInit {
 		// Add recurring job
 		await this.sendNotificationsQueue.add('recurring-process', null, {
 			repeat: {
-				cron: '5 * * * *' // Every 5 minutes
+				cron: '*/5 * * * *' // Every 5 minutes
 			},
 			jobId: '2'
 		});
