@@ -3,7 +3,7 @@ import got, {HTTPError} from 'got';
 import probe, {ProbeResult} from 'probe-image-size';
 import {Logger} from '@nestjs/common';
 import * as exifr from 'exifr';
-import {ComicImg, PrismaClient} from '@prisma/client';
+import {ComicImg, Prisma, PrismaClient} from '@prisma/client';
 
 const PARALLEL_SCRAPES = 5;
 
@@ -44,7 +44,8 @@ const processJob = async (_: Job) => {
 	let fetchingId = 1;
 
 	if (latestComic) {
-		fetchingId = latestComic.id + 1;
+		// Check the latest two for updates
+		fetchingId = latestComic.id - 2;
 	}
 
 	// Require 2 not found errors in a row to terminate
@@ -116,22 +117,59 @@ const processJob = async (_: Job) => {
 					}
 				}
 
-				await prisma.comic.create({
-					data: {
-						id: comic.num,
-						publishedAt: new Date(`${comic.month}-${comic.day}-${comic.year}`),
-						news: comic.news,
-						safeTitle: comic.safe_title,
-						title: comic.title,
-						transcript: comic.transcript,
-						alt: comic.alt,
-						sourceUrl: `https://xkcd.com/${comic.num}`,
-						explainUrl: `https://www.explainxkcd.com/wiki/index.php/${comic.num}`,
-						imgs: {
-							create: imgs
-						}
-					}
+				const currentComic = await prisma.comic.findUnique({
+					where: {id: comic.num},
+					select: {imgs: true}
 				});
+
+				const data: Prisma.ComicCreateInput = {
+					id: comic.num,
+					publishedAt: new Date(`${comic.month}-${comic.day}-${comic.year}`),
+					news: comic.news,
+					safeTitle: comic.safe_title,
+					title: comic.title,
+					transcript: comic.transcript,
+					alt: comic.alt,
+					sourceUrl: `https://xkcd.com/${comic.num}`,
+					explainUrl: `https://www.explainxkcd.com/wiki/index.php/${comic.num}`
+				};
+
+				if (currentComic) {
+					await Promise.all<any>([
+						prisma.comic.update({
+							where: {id: data.id},
+							data
+						}),
+						...imgs.map(async img => {
+							const existingImage = await prisma.comicImg.findFirst({
+								where: {
+									comic_id: data.id,
+									size: img.size
+								}
+							});
+
+							if (existingImage) {
+								await prisma.comicImg.update({
+									where: {id: existingImage.id},
+									data: img
+								});
+							} else {
+								await prisma.comicImg.create({
+									data: {
+										...img,
+										comic_id: data.id
+									}
+								});
+							}
+						})
+					]);
+				} else {
+					data.imgs = {
+						create: imgs
+					};
+
+					await prisma.comic.create({data});
+				}
 			} catch (error: unknown) {
 				if (error instanceof HTTPError) {
 					if (error.response.statusCode === 404) {
