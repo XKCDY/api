@@ -33,4 +33,4 @@ COPY Procfile Procfile
 ENV NODE_ENV=production
 
 ENTRYPOINT ["yarn"]
-CMD ["start"]
+CMD ["start:prod"]

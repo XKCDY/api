@@ -15,6 +15,7 @@
     "prebuild": "rimraf dist",
     "build": "nest build",
     "start": "node dist/main",
+    "start:prod": "npm run migrations:run && npm start",
     "dev": "nest start --watch",
     "lint": "xo",
     "lint:fix": "xo --fix",
