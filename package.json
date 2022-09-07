@@ -23,7 +23,7 @@
     "migrations:generate": "prisma migrate dev --preview-feature",
     "migrations:run": "prisma migrate deploy --preview-feature",
     "postinstall": "npm run generate-typings",
-    "generate-typings": "kysely-codegen"
+    "generate-typings": "kysely-codegen --out-file ./src/types/db.d.ts"
   },
   "devDependencies": {
     "@nestjs/cli": "^7.5.6",

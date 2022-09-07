@@ -1,31 +1,22 @@
-import {PrismaClient} from '@prisma/client';
+import {db} from 'src/lib/db';
 import specialComics from '../../special-comics.json';
-
-const prisma = new PrismaClient();
 
 const processJob = async () => {
 	await Promise.all(Object.keys(specialComics).map(async id => {
 		const url = specialComics[id as keyof typeof specialComics];
-
-		const comic = await prisma.comic.findUnique({where: {id: Number.parseInt(id, 10)}});
+		const comic = await db.selectFrom('comics').where('id', '=', Number.parseInt(id, 10)).selectAll().executeTakeFirst();
 
 		if (!comic) {
 			return;
 		}
 
 		if (comic.interactiveUrl !== url) {
-			await prisma.comic.update({
-				data: {
-					interactiveUrl: url
-				},
-				where: {
-					id: Number.parseInt(id, 10)
-				}
-			});
+			await db.updateTable('comics')
+				.set({interactiveUrl: url})
+				.where('id', '=', Number.parseInt(id, 10))
+				.execute();
 		}
 	}));
-
-	await prisma.$disconnect();
 };
 
 export default processJob;
