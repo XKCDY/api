@@ -1,13 +1,15 @@
-import {Job} from 'bullmq';
+import type {Job} from 'bullmq';
 import got, {HTTPError} from 'got';
-import probe, {ProbeResult} from 'probe-image-size';
+import type {ProbeResult} from 'probe-image-size';
+import probe from 'probe-image-size';
 import {Logger} from '@nestjs/common';
 import * as exifr from 'exifr';
-import {ComicImg, Prisma, PrismaClient} from '@prisma/client';
+import type {ComicImg, Prisma} from '@prisma/client';
+import {PrismaClient} from '@prisma/client';
 
 const PARALLEL_SCRAPES = 5;
 
-interface XKCDResponse {
+type XKCDResponse = {
 	num: number;
 	link: string;
 	year: string;
@@ -19,7 +21,7 @@ interface XKCDResponse {
 	alt: string;
 	img: string;
 	title: string;
-}
+};
 
 enum ImgSize {
 	x1 = 'x1',

@@ -7,5 +7,5 @@ export class GetAllComicsParameters {
 	@IsOptional()
 	@Type(() => Number)
 	@ApiProperty({required: false, description: 'return all comics after this ID'})
-	since!: number;
+		since!: number;
 }

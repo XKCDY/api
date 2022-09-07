@@ -1,4 +1,4 @@
-import {Job} from 'bullmq';
+import type {Job} from 'bullmq';
 import {PrismaClient} from '@prisma/client';
 import {Logger} from '@nestjs/common';
 import apnProviderFactory from 'src/lib/apn-provider-factory';
