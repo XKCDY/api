@@ -31,8 +31,7 @@ export class DeviceTokenController {
 			.insertInto('device_tokens')
 			.values({
 				...createTokenDto,
-				// Todo: pull dynamically
-				lastComicIdSent: 0,
+				lastComicIdSent: qb => qb.selectFrom('comics').orderBy('id', 'desc').limit(1).select('id'),
 				updatedAt: new Date()
 			})
 			.execute();
