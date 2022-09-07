@@ -1,13 +1,13 @@
 import {join} from 'node:path';
 import {BullModule} from '@codetheweb/nestjs-bull';
 import {Module} from '@nestjs/common';
-import {PrismaModule} from 'src/prisma/prisma.module';
+import {DbModule} from 'src/db/db.module';
 import {DeviceTokenController} from './device-token.controller';
 import {DeviceTokenService} from './device-token.service';
 
 @Module({
 	imports: [
-		PrismaModule,
+		DbModule,
 		BullModule.registerQueue({
 			name: 'send-notifications',
 			processors: [join(__dirname, 'processors/send-notifications.js')]
