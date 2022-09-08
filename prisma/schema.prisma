@@ -19,6 +19,7 @@ model ComicImg {
   comics    Comic @relation(fields: [comic_id], references: [id])
 
   @@index([comic_id], name: "comic_imgs_comic_id")
+  @@unique([comic_id, size])
 }
 
 model Comic {

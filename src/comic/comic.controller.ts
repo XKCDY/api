@@ -5,7 +5,7 @@ import {GetAllComicsParameters} from './types';
 
 const getBaseQuery = (db: DbService) => db
 	.selectFrom('comics')
-	.leftJoin('comic_imgs', 'comic_imgs.comic_id', 'comics.id')
+	.innerJoin('comic_imgs', 'comic_imgs.comic_id', 'comics.id')
 	.selectAll('comics')
 	.select([sql`json_agg(json_build_object('width', width, 'height', height, 'ratio', ratio, 'sourceUrl', comic_imgs."sourceUrl", 'size', size))`.as('imgs')])
 	.groupBy('comics.id');

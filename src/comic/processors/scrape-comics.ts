@@ -5,7 +5,7 @@ import probe from 'probe-image-size';
 import {Logger} from '@nestjs/common';
 import * as exifr from 'exifr';
 import {db} from 'src/lib/db';
-import type {DB} from 'kysely-codegen';
+import type {DB} from 'src/types/db';
 import type {InsertObject} from 'kysely';
 
 const PARALLEL_SCRAPES = 5;
@@ -28,6 +28,8 @@ enum ImgSize {
 	x1 = 'x1',
 	x2 = 'x2'
 }
+
+const logger = new Logger('Job: scrape comics');
 
 const getX2Url = (fromUrl: string): string => {
 	const imageUrlSplit = fromUrl.split('.');
@@ -74,17 +76,12 @@ const scrapeId = async (id: number) => {
 				size: i === 0 ? ImgSize.x1 : ImgSize.x2
 			} as InsertObject<DB, 'comic_imgs'>);
 		} else if (result.reason.statusCode !== 404) {
+			logger.error(result.reason);
 			throw new Error(`Non-404 HTTP code: ${result.reason.statusCode as string}`);
 		}
 	}
 
 	await db.transaction().execute(async trx => {
-		const currentComic = await trx
-			.selectFrom('comics')
-			.where('id', '=', comic.num)
-			.selectAll()
-			.executeTakeFirst();
-
 		const data: InsertObject<DB, 'comics'> = {
 			id: comic.num,
 			publishedAt: new Date(`${comic.month}-${comic.day}-${comic.year}`),
@@ -97,50 +94,26 @@ const scrapeId = async (id: number) => {
 			explainUrl: `https://www.explainxkcd.com/wiki/index.php/${comic.num}`
 		};
 
-		const updatePromises: Array<Promise<any>> = imgs.map(async img => {
-			const existingImage = await trx
-				.selectFrom('comic_imgs')
-				.where('comic_id', '=', data.id)
-				.where('size', '=', img.size)
-				.select('id')
-				.executeTakeFirst();
-
-			if (existingImage) {
-				await trx
-					.updateTable('comic_imgs')
-					.where('id', '=', existingImage.id)
-					.set(img as any)
-					.execute();
-			} else {
-				await trx
-					.insertInto('comic_imgs')
-					.values({
-						...img,
-						comic_id: data.id
-					})
-					.execute();
-			}
-		});
-		if (currentComic) {
-			updatePromises.push(trx
-				.updateTable('comics')
-				.where('id', '=', data.id)
-				.set(data)
-				.execute(),
-			);
-		} else {
-			updatePromises.push(trx
+		await Promise.all([
+			trx
 				.insertInto('comics')
 				.values(data)
+				.onConflict(oc => oc.column('id').doUpdateSet(data))
 				.execute(),
-			);
-		}
-
-		await Promise.all(updatePromises);
+			...imgs.map(async img => trx
+				.insertInto('comic_imgs')
+				.values({
+					...img,
+					comic_id: comic.num,
+				})
+				.onConflict(oc => oc
+					.columns(['comic_id', 'size'])
+					.doUpdateSet(img as any)
+				)
+				.execute())
+		]);
 	});
 };
-
-const logger = new Logger('Job: scrape comics');
 
 const processJob = async (_: Job) => {
 	logger.log('Started scraping...');
@@ -183,20 +156,25 @@ const processJob = async (_: Job) => {
 			idsToScrape.push(i);
 		}
 
-		// eslint-disable-next-line no-await-in-loop
-		await Promise.all(idsToScrape.map(async id => {
-			try {
-				await scrapeId(id);
-			} catch (error: unknown) {
-				if (error instanceof HTTPError) {
-					if (error.response.statusCode === 404) {
+		try {
+			// eslint-disable-next-line no-await-in-loop
+			await Promise.all(idsToScrape.map(async id => {
+				try {
+					logger.log(`Scraping ${id}...`);
+					await scrapeId(id);
+				} catch (error: unknown) {
+					if (error instanceof HTTPError && error.response.statusCode === 404) {
 						idsNotFound.push(id);
-					} else {
-						throw error;
+						return;
 					}
+
+					throw error;
 				}
-			}
-		}));
+			}));
+		} catch (error: unknown) {
+			logger.error(error);
+			throw error;
+		}
 
 		fetchingId += PARALLEL_SCRAPES;
 	}
