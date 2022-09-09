@@ -10,23 +10,7 @@ export class DeviceTokenController {
 	constructor(private readonly db: DbService) {}
 
 	@Put()
-	async addToken(@Body() createTokenDto: CreateTokenDto) {
-		const existingToken = await this.db
-			.selectFrom('device_tokens')
-			.where('token', '=', createTokenDto.token)
-			.selectAll()
-			.executeTakeFirst();
-
-		if (existingToken) {
-			await this.db
-				.updateTable('device_tokens')
-				.set(createTokenDto)
-				.where('token', '=', createTokenDto.token)
-				.execute();
-
-			return;
-		}
-
+	async putToken(@Body() createTokenDto: CreateTokenDto) {
 		await this.db
 			.insertInto('device_tokens')
 			.values({
@@ -34,6 +18,10 @@ export class DeviceTokenController {
 				lastComicIdSent: qb => qb.selectFrom('comics').orderBy('id', 'desc').limit(1).select('id'),
 				updatedAt: new Date()
 			})
+			.onConflict(oc => oc.column('token').doUpdateSet({
+				...createTokenDto,
+				updatedAt: new Date()
+			}))
 			.execute();
 	}
 

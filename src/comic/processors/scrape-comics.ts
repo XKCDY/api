@@ -76,7 +76,7 @@ const scrapeId = async (id: number) => {
 				size: i === 0 ? ImgSize.x1 : ImgSize.x2
 			} as InsertObject<DB, 'comic_imgs'>);
 		} else if (result.reason.statusCode !== 404) {
-			logger.error(result.reason);
+			logger.error(`Failed fetching image for ${id}`, result.reason);
 			throw new Error(`Non-404 HTTP code: ${result.reason.statusCode as string}`);
 		}
 	}
