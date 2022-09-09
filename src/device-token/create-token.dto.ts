@@ -3,9 +3,9 @@ import {IsDefined, IsString} from 'class-validator';
 export class CreateTokenDto {
 	@IsDefined()
 	@IsString()
-	token!: string;
+		token!: string;
 
 	@IsDefined()
 	@IsString()
-	version!: string;
+		version!: string;
 }

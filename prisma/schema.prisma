@@ -19,6 +19,7 @@ model ComicImg {
   comics    Comic @relation(fields: [comic_id], references: [id])
 
   @@index([comic_id], name: "comic_imgs_comic_id")
+  @@unique([comic_id, size])
 }
 
 model Comic {
@@ -38,7 +39,7 @@ model Comic {
 
 model DeviceToken {
   @@map("device_tokens")
-  token           String   @id @db.VarChar(255)
+  token           String   @id @db.VarChar(255) @unique
   version         String?  @db.VarChar(255)
   lastComicIdSent Int
   createdAt       DateTime @db.Timestamptz(6) @default(now())

@@ -1,11 +1,10 @@
-import {Job} from 'bullmq';
-import {PrismaClient} from '@prisma/client';
+import type {Job} from 'bullmq';
 import {Logger} from '@nestjs/common';
 import apnProviderFactory from 'src/lib/apn-provider-factory';
 import pLimit from 'p-limit';
 import apn from 'apn';
+import {db} from 'src/lib/db';
 
-const prisma = new PrismaClient();
 const logger = new Logger('Job: send notifications');
 
 const provider = apnProviderFactory();
@@ -14,23 +13,14 @@ const processJob = async (_: Job) => {
 	logger.log('Started processing...');
 
 	// Get latest comic ID
-	const latestComic = await prisma.comic.findFirst({orderBy: {id: 'desc'}});
+	const latestComic = await db.selectFrom('comics').orderBy('id', 'desc').selectAll().executeTakeFirst();
 
 	if (!latestComic) {
 		return;
 	}
 
 	// Find tokens of devices that need to be updated
-	const devicesToUpdate = await prisma.deviceToken.findMany({
-		where: {
-			lastComicIdSent: {
-				lt: latestComic.id
-			}
-		},
-		select: {
-			token: true
-		}
-	});
+	const devicesToUpdate = await db.selectFrom('device_tokens').where('lastComicIdSent', '<', latestComic.id).select('token').execute();
 
 	// Send notifications
 	const limit = pLimit(10);
@@ -50,26 +40,24 @@ const processJob = async (_: Job) => {
 		const result = await provider.send(notification, token);
 
 		// Success, update lastComicIdSent field
-		await Promise.all(result.sent.map(async sent => prisma.deviceToken.update({
-			data: {
-				lastComicIdSent: latestComic.id
-			},
-			where: {
-				token: sent.device
-			}
-		})));
+		await Promise.all(result.sent.map(async sent => {
+			await db
+				.updateTable('device_tokens')
+				.set({lastComicIdSent: latestComic.id})
+				.where('token', '=', sent.device)
+				.execute();
+		}));
 
 		await Promise.all(result.failed.map(async failed => {
 			if (failed.response?.reason === 'BadDeviceToken') {
 				// Remove token
-				await prisma.deviceToken.delete({where: {token: failed.device}});
+				await db.deleteFrom('device_tokens').where('token', '=', failed.device).execute();
 			}
 		}));
 	})));
 
 	logger.log('Finished sending notifications');
 
-	await prisma.$disconnect();
 	provider.shutdown();
 };
 

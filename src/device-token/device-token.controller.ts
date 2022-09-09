@@ -1,39 +1,39 @@
 import {Body, Controller, Delete, Injectable, NotFoundException, Param, Post, Put} from '@nestjs/common';
 import apn from 'apn';
+import {DbService} from 'src/db/db.service';
 import apnProviderFactory from 'src/lib/apn-provider-factory';
-import {PrismaService} from 'src/prisma/prisma.service';
 import {CreateTokenDto} from './create-token.dto';
 
 @Controller('device-tokens')
 @Injectable()
 export class DeviceTokenController {
-	constructor(private readonly prisma: PrismaService) {}
+	constructor(private readonly db: DbService) {}
 
 	@Put()
-	async addToken(@Body() createTokenDto: CreateTokenDto) {
-		const latestComic = await this.prisma.comic.findFirst({orderBy: {id: 'desc'}});
-
-		await this.prisma.deviceToken.upsert({
-			create: {
+	async putToken(@Body() createTokenDto: CreateTokenDto) {
+		await this.db
+			.insertInto('device_tokens')
+			.values({
 				...createTokenDto,
-				lastComicIdSent: latestComic?.id ?? 0
-			},
-			update: createTokenDto,
-			where: {
-				token: createTokenDto.token
-			}
-		});
+				lastComicIdSent: qb => qb.selectFrom('comics').orderBy('id', 'desc').limit(1).select('id'),
+				updatedAt: new Date()
+			})
+			.onConflict(oc => oc.column('token').doUpdateSet({
+				...createTokenDto,
+				updatedAt: new Date()
+			}))
+			.execute();
 	}
 
 	@Delete(':token')
 	async removeToken(@Param('token') token: string) {
-		const existingToken = await this.prisma.deviceToken.findUnique({where: {token}});
+		const existingToken = await this.db.selectFrom('device_tokens').where('token', '=', token).executeTakeFirst();
 
 		if (!existingToken) {
 			throw new NotFoundException('Token does not exist');
 		}
 
-		await this.prisma.deviceToken.delete({where: {token}});
+		await this.db.deleteFrom('device_tokens').where('token', '=', token).execute();
 	}
 
 	@Post(':token/test')
