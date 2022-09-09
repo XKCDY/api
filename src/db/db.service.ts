@@ -1,8 +1,8 @@
 import type {OnModuleInit, OnModuleDestroy} from '@nestjs/common';
 import {Injectable} from '@nestjs/common';
 import {Kysely, PostgresDialect} from 'kysely';
-import type {DB} from 'kysely-codegen';
 import {Pool} from 'pg';
+import type {DB} from 'src/types/db';
 
 @Injectable()
 export class DbService extends Kysely<DB>
