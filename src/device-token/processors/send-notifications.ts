@@ -52,6 +52,8 @@ const processJob = async (_: Job) => {
 			if (failed.response?.reason === 'BadDeviceToken') {
 				// Remove token
 				await db.deleteFrom('device_tokens').where('token', '=', failed.device).execute();
+			} else {
+				logger.error(`Failed to send notification to ${failed.device}: ${failed.response?.reason ?? ''}`);
 			}
 		}));
 	})));
