@@ -34,7 +34,7 @@ const processJob = async (_: Job) => {
 			title: 'New comic!',
 			body: `${latestComic.title} (#${latestComic.id}) was just published.`
 		};
-		notification.topic = 'com.maxisom.xkcdy';
+		notification.topic = 'com.maxisom.XKCDY';
 		notification.payload = {comicId: latestComic.id};
 
 		const result = await provider.send(notification, token);
