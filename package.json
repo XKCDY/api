@@ -91,7 +91,7 @@
     "dd-trace": "^0.31.1",
     "dotenv": "^8.2.0",
     "exifr": "^5.0.3",
-    "fastify": "4.5.3",
+    "fastify": "4.8.1",
     "fastify-swagger": "^5.2.0",
     "got": "^11.3.0",
     "ioredis": "^4.24.3",
