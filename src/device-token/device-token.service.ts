@@ -1,6 +1,6 @@
 import type {OnModuleInit} from '@nestjs/common';
 import {Injectable} from '@nestjs/common';
-import {InjectQueue} from '@codetheweb/nestjs-bull';
+import {InjectQueue} from '@nestjs/bullmq';
 import {Queue} from 'bullmq';
 
 @Injectable()
@@ -10,15 +10,15 @@ export class DeviceTokenService implements OnModuleInit {
 	async onModuleInit() {
 		// Run immediately if job doesn't exist
 		await this.sendNotificationsQueue.add('initial-process', null, {
-			jobId: '1'
+			jobId: 'first-job'
 		});
 
 		// Add recurring job
 		await this.sendNotificationsQueue.add('recurring-process', null, {
 			repeat: {
-				cron: '*/5 * * * *' // Every 5 minutes
+				pattern: '*/5 * * * *' // Every 5 minutes
 			},
-			jobId: '2'
+			jobId: 'recurring-job'
 		});
 	}
 }

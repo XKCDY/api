@@ -26,7 +26,9 @@
   },
   "devDependencies": {
     "@nestjs/cli": "^7.5.6",
+    "@types/bull": "4.10.0",
     "@types/cors": "^2.8.6",
+    "@types/ioredis": "5.0.0",
     "@types/morgan": "^1.9.1",
     "@types/node": "^16.0.0",
     "@types/pg": "8.6.5",
@@ -74,8 +76,8 @@
     ]
   },
   "dependencies": {
-    "@codetheweb/nestjs-bull": "^0.3.1",
     "@fastify/static": "6.5.0",
+    "@nestjs/bullmq": "1.1.0",
     "@nestjs/common": "^9.0.11",
     "@nestjs/config": "^0.6.3",
     "@nestjs/core": "^9.0.11",
@@ -84,7 +86,7 @@
     "@nestjs/swagger": "^6.1.2",
     "@prisma/client": "4.11.0",
     "apn": "^2.2.0",
-    "bullmq": "^1.15.1",
+    "bullmq": "3.10.3",
     "class-transformer": "^0.4.0",
     "class-validator": "^0.13.1",
     "cors": "^2.8.5",
@@ -94,7 +96,7 @@
     "fastify": "4.5.3",
     "fastify-swagger": "^5.2.0",
     "got": "^11.3.0",
-    "ioredis": "^4.24.3",
+    "ioredis": "^5.0.0",
     "kysely": "0.21.6",
     "p-limit": "^3.0.2",
     "pg": "8.7.3",

@@ -1,5 +1,5 @@
 import {join} from 'node:path';
-import {BullModule} from '@codetheweb/nestjs-bull';
+import {BullModule} from '@nestjs/bullmq';
 import {Module} from '@nestjs/common';
 import {DbModule} from 'src/db/db.module';
 import {ComicController} from './comic.controller';
