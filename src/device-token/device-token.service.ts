@@ -9,16 +9,13 @@ export class DeviceTokenService implements OnModuleInit {
 
 	async onModuleInit() {
 		// Run immediately if job doesn't exist
-		await this.sendNotificationsQueue.add('initial-process', null, {
-			jobId: 'first-job'
-		});
+		await this.sendNotificationsQueue.add('initial-process', null, {});
 
 		// Add recurring job
 		await this.sendNotificationsQueue.add('recurring-process', null, {
 			repeat: {
 				pattern: '*/5 * * * *' // Every 5 minutes
 			},
-			jobId: 'recurring-job'
 		});
 	}
 }

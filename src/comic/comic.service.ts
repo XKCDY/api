@@ -12,29 +12,23 @@ export class ComicService implements OnModuleInit {
 
 	async onModuleInit() {
 		// Run immediately if job doesn't exist
-		await this.scrapeComicsQueue.add('initial-scrape', null, {
-			jobId: 'first-job'
-		});
+		await this.scrapeComicsQueue.add('initial-scrape', null, {});
 
 		// Add recurring job
 		await this.scrapeComicsQueue.add('recurring-scrape', null, {
 			repeat: {
 				pattern: '*/5 * * * *' // Every 5 minutes
 			},
-			jobId: 'recurring-job'
 		});
 
 		// Run immediately if job doesn't exist
-		await this.specialComicsQueue.add('initial-check', null, {
-			jobId: 'first-job'
-		});
+		await this.specialComicsQueue.add('initial-check', null, {});
 
 		// Add recurring job
 		await this.specialComicsQueue.add('recurring-check', null, {
 			repeat: {
 				pattern: '*/5 * * * *' // Every 5 minutes
 			},
-			jobId: 'recurring-job'
 		});
 	}
 }
