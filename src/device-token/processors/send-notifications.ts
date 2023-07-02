@@ -7,9 +7,9 @@ import {db} from 'src/lib/db';
 
 const logger = new Logger('Job: send notifications');
 
-const provider = apnProviderFactory();
-
 const processJob = async (_: Job) => {
+	const provider = apnProviderFactory();
+
 	logger.log('Started processing...');
 
 	// Get latest comic ID
