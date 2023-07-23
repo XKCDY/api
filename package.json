@@ -101,6 +101,7 @@
     "pg": "8.11.1",
     "probe-image-size": "^5.0.0",
     "reflect-metadata": "^0.1.13",
+    "rxjs": "7.8.1",
     "uuid": "^8.2.0"
   }
 }
