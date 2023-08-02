@@ -31,3 +31,14 @@ async function bootstrap() {
 }
 
 void bootstrap();
+
+const EXIT_AFTER_MS = process.env.EXIT_AFTER_MS ? Number.parseInt(process.env.EXIT_AFTER_MS, 10) : 0;
+const RANDOM_EXIT_DELAY_MS = Math.random() * 5000;
+
+if (EXIT_AFTER_MS > 0) {
+	setTimeout(() => {
+		console.log('Reached exit time, exiting.');
+		// eslint-disable-next-line unicorn/no-process-exit
+		process.exit(2);
+	}, EXIT_AFTER_MS + RANDOM_EXIT_DELAY_MS);
+}
