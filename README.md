@@ -1,4 +1,4 @@
-# XKCDY / api
+# XKCDY/api
 
 This is the backend API for [XKCDY](https://xkcdy.com).
 
